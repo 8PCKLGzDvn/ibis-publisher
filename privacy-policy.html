@@ -1,80 +1,88 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p2 {margin: 0.0px 0.0px 32.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #757575; -webkit-text-stroke: #757575}
-    p.p3 {margin: 0.0px 0.0px 15.0px 0.0px; font: 15.0px 'Helvetica Neue'; color: #262626; -webkit-text-stroke: #262626}
-    p.p6 {margin: 0.0px 0.0px 15.0px 0.0px; font: 15.0px 'Helvetica Neue'; color: #175ae2; -webkit-text-stroke: #175ae2}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #6d6d6d; -webkit-text-stroke: #6d6d6d; min-height: 15.0px}
-    p.p8 {margin: 0.0px 0.0px 13.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #757575; -webkit-text-stroke: #757575}
-    li.li5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px 'Helvetica Neue'; color: #262626; -webkit-text-stroke: #262626}
-    span.s1 {font-kerning: none}
-    span.s2 {-webkit-text-stroke: 0px #000000}
-    span.s3 {font: 15.0px 'Helvetica Neue'; text-decoration: underline ; font-kerning: none; color: #175ae2; -webkit-text-stroke: 0px #175ae2}
-    span.s4 {font-kerning: none; color: #262626; -webkit-text-stroke: 0px #262626}
-    span.s5 {text-decoration: underline ; font-kerning: none; color: #175ae2; -webkit-text-stroke: 0px #175ae2}
-    ul.ul1 {list-style-type: disc}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ibis Publisher - Privacy Policy</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; color: #1a1a1a; line-height: 1.7; background: #fff; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  h2 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+  p, li { font-size: 15px; color: #333; }
+  .updated { font-size: 13px; color: #888; margin-bottom: 32px; }
+  a { color: #1a6b72; }
+  ul { padding-left: 20px; }
+  ul li { margin-bottom: 8px; }
+  .note { background: #f0f9f9; border-left: 3px solid #1a6b72; padding: 16px 20px; border-radius: 4px; margin: 24px 0; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 40px 0; }
+</style>
 </head>
 <body>
-<h1 style="margin: 0.0px 0.0px 4.0px 0.0px; font: 28.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>Privacy Policy</b></span></h1>
-<p class="p2"><span class="s1">Last updated: June 17, 2026</span></p>
-<p class="p3"><span class="s1">This Privacy Policy describes how Ibis Publisher and Ibis Metadata ("Ibis", "we", "our", or "us") handles information when you use our applications, including our Adobe Lightroom Classic plugin, web tools, and any associated services.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>1. Information We Process</b></span></h2>
-<p class="p3"><span class="s1">When you use Ibis, the following data may be processed:</span></p>
-<ul class="ul1">
-  <li class="li5"><span class="s2"><b></b></span><span class="s1"><b>Photographs:</b> Images you select for metadata generation are temporarily converted to low-resolution JPEG copies (max 1024px) and sent to a third-party AI service for analysis. Original files are never uploaded or modified.</span></li>
-  <li class="li5"><span class="s2"><b></b></span><span class="s1"><b>API Keys:</b> Your Anthropic API key is stored locally on your device within Adobe Lightroom's plugin preferences. It is transmitted only to Anthropic's API servers to authenticate requests. We never see, collect, or store your API key on any server.</span></li>
-  <li class="li5"><span class="s2"><b></b></span><span class="s1"><b>User Inputs:</b> Seed keywords, location text, and required words you enter are sent alongside the image to the AI service to generate metadata. These inputs are not stored after processing.</span></li>
+
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: June 17, 2026</p>
+
+<div class="note">
+<strong>Ibis Publisher is a local application.</strong> It runs entirely on your Mac and does not operate any external servers. Your photos and captions are sent directly from your device to Facebook's API — they do not pass through any Ibis-operated infrastructure.
+</div>
+
+<h2>1. What Ibis Publisher Does</h2>
+<p>Ibis Publisher is a desktop tool for professional photographers that connects Adobe Lightroom Classic to your Facebook Page. It allows you to export photos from Lightroom, write captions, and schedule or immediately publish posts to your Facebook Page via Facebook's Graph API.</p>
+
+<h2>2. Information Processed Locally</h2>
+<p>The following information is stored locally on your Mac and is never transmitted to any Ibis-operated server:</p>
+<ul>
+  <li><strong>Your Facebook Page Access Token</strong> — stored in a local SQLite database on your device, used solely to authenticate requests to Facebook's API.</li>
+  <li><strong>Your Facebook Page ID and Page Name</strong> — stored locally for display purposes.</li>
+  <li><strong>Post queue data</strong> — captions, scheduled times, and local file paths, stored in a local database at <code>~/Library/Application Support/IbisPublisher/queue.db</code>.</li>
+  <li><strong>Exported JPEG files</strong> — temporary copies of your photos exported for upload, stored at <code>~/Library/Application Support/IbisPublisher/exports/</code> and automatically deleted after successful posting.</li>
 </ul>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>2. Information We Do Not Collect</b></span></h2>
-<p class="p3"><span class="s1">Ibis does not collect, store, or transmit:</span></p>
-<ul class="ul1">
-  <li class="li5"><span class="s2"></span><span class="s1">Personal identification information (name, email, address)</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Usage analytics or tracking data</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Cookies or browser fingerprints</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Your original photographs or Lightroom catalog data</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Account credentials for any service other than your self-provided API key</span></li>
+
+<h2>3. Information Sent to Facebook</h2>
+<p>When you publish or schedule a post, Ibis Publisher sends the following directly from your Mac to Facebook's Graph API (graph.facebook.com):</p>
+<ul>
+  <li>The exported JPEG image</li>
+  <li>Your post caption</li>
+  <li>The scheduled publish time (if scheduling in advance)</li>
+  <li>Your Page Access Token (to authenticate the request)</li>
 </ul>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>3. Third-Party Services</b></span></h2>
-<p class="p3"><span class="s1">Ibis uses the Anthropic API (anthropic.com) to analyse images and generate metadata. When you use Ibis:</span></p>
-<ul class="ul1">
-  <li class="li5"><span class="s2"></span><span class="s1">A temporary, resized copy of your selected image is sent to Anthropic's servers via their API.</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Anthropic processes the image in accordance with their own <a href="https://www.anthropic.com/privacy"><span class="s3">Privacy Policy</span></a> and <a href="https://www.anthropic.com/terms"><span class="s3">Terms of Service</span></a>.</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">API requests are made directly from your device to Anthropic. No data passes through Ibis-operated servers.</span></li>
+<p>This data goes directly from your device to Facebook. It does not pass through any Ibis servers. Facebook's handling of this data is governed by <a href="https://www.facebook.com/privacy/policy/">Meta's Privacy Policy</a>.</p>
+
+<h2>4. Information We Do Not Collect</h2>
+<p>Ibis Publisher does not collect, store, or transmit:</p>
+<ul>
+  <li>Your name, email address, or any personal identification information</li>
+  <li>Usage analytics or telemetry</li>
+  <li>Your original photographs or Lightroom catalog data</li>
+  <li>Any data to Ibis-operated servers — none exist</li>
 </ul>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>4. Data Storage</b></span></h2>
-<p class="p3"><span class="s1">All data processed by Ibis remains on your local device. Plugin settings (API key, output limits) are stored in Adobe Lightroom's local plugin preferences. Temporary image files created during processing are deleted immediately after use. Ibis does not operate any servers or databases that store user data.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>5. Data Sharing</b></span></h2>
-<p class="p3"><span class="s1">We do not sell, rent, trade, or otherwise share any user data with third parties. The only external transmission is the image analysis request sent directly from your device to Anthropic's API, initiated by you.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>6. Data Retention</b></span></h2>
-<p class="p3"><span class="s1">Ibis does not retain any user data beyond the immediate processing session. Temporary files are deleted automatically. Plugin preferences persist locally on your device until you remove the plugin or clear them manually.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>7. Children's Privacy</b></span></h2>
-<p class="p3"><span class="s1">Ibis is not directed at children under 13. We do not knowingly collect or process data from children.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>8. Security</b></span></h2>
-<p class="p3"><span class="s1">All communication with the Anthropic API is conducted over HTTPS (TLS encryption). Your API key is stored locally in Lightroom's encrypted preferences. Since Ibis does not operate servers or collect data remotely, the primary security boundary is your own device.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>9. Your Rights</b></span></h2>
-<p class="p3"><span class="s1">Since Ibis does not collect or store personal data on any server, there is no user data for us to access, modify, export, or delete. All data remains under your control on your local device. If you wish to remove all Ibis data, simply uninstall the plugin from Adobe Lightroom's Plug-in Manager.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>10. User Data Deletion</b></span></h2>
-<p class="p3"><span class="s1">To delete all data associated with Ibis:</span></p>
-<ul class="ul1">
-  <li class="li5"><span class="s2"></span><span class="s1">Open Adobe Lightroom Classic</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Go to File &gt; Plug-in Manager</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">Select Ibis Metadata and click Remove</span></li>
-  <li class="li5"><span class="s2"></span><span class="s1">This removes all locally stored preferences including your API key</span></li>
+
+<h2>5. Data Storage</h2>
+<p>All application data is stored locally on your Mac:</p>
+<ul>
+  <li>Database: <code>~/Library/Application Support/IbisPublisher/queue.db</code></li>
+  <li>Temporary exports: <code>~/Library/Application Support/IbisPublisher/exports/</code></li>
 </ul>
-<p class="p3"><span class="s1">No server-side data exists to delete, as Ibis does not store data remotely.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>11. Changes to This Policy</b></span></h2>
-<p class="p3"><span class="s1">We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated revision date. Continued use of Ibis after changes constitutes acceptance of the updated policy.</span></p>
-<h2 style="margin: 0.0px 0.0px 8.0px 0.0px; font: 18.0px 'Helvetica Neue'; color: #141414; -webkit-text-stroke: #141414"><span class="s1"><b>12. Contact</b></span></h2>
-<p class="p3"><span class="s1">If you have questions about this Privacy Policy, please contact us at:</span></p>
-<p class="p6"><span class="s4">Email: <a href="mailto:hellow@justinmullet.com"><span class="s5">hello@justinmullet.com</span></a></span></p>
-<p class="p7"><span class="s1"></span><br></p>
-<p class="p8"><span class="s1">Ibis Publisher · Ibis Metadata · © 2026</span></p>
+<p>Exported JPEGs are automatically deleted after each photo is successfully uploaded to Facebook.</p>
+
+<h2>6. Facebook / Meta</h2>
+<p>Ibis Publisher uses Facebook's Graph API under your own developer app credentials. Your use of Facebook through Ibis Publisher is subject to <a href="https://www.facebook.com/terms">Meta's Terms of Service</a> and <a href="https://www.facebook.com/privacy/policy/">Privacy Policy</a>. Ibis Publisher is not affiliated with or endorsed by Meta Platforms, Inc.</p>
+
+<h2>7. Security</h2>
+<p>All communication with Facebook's API is conducted over HTTPS. Your Page Access Token is stored locally in a SQLite file on your device. Since Ibis Publisher does not operate servers or collect data remotely, the primary security boundary is your own Mac.</p>
+
+<h2>8. Children's Privacy</h2>
+<p>Ibis Publisher is intended for professional photographers and is not directed at children under 13.</p>
+
+<h2>9. Changes to This Policy</h2>
+<p>We may update this Privacy Policy from time to time. Changes will be reflected on this page with an updated date.</p>
+
+<h2>10. Contact</h2>
+<p>If you have questions about this Privacy Policy, contact us at:<br>
+Email: <a href="mailto:hello@justinmullet.com">hello@justinmullet.com</a></p>
+
+<hr>
+<p style="font-size: 13px; color: #888;">Ibis Publisher &middot; &copy; 2026 Justin Mullet</p>
+
 </body>
 </html>
