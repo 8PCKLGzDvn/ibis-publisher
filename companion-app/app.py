@@ -113,7 +113,7 @@ input[type=checkbox] { width:auto; margin-right:6px; }
          font-size:11px; font-weight:700; text-transform:uppercase; }
 .badge-not-uploaded { background:#e4e0d8; color:#948466; }
 .badge-uploading    { background:#fff3cd; color:#7a5c00; }
-.badge-scheduled    { background:#d3e4e2; color:#4a7a76; }
+.badge-scheduled    { background:#d6e0ec; color:#4a6a8a; }
 .badge-posted       { background:#d4edda; color:#2a6a3a; }
 .badge-success      { background:#d4edda; color:#2a6a3a; }
 .badge-failure      { background:#f5d8d4; color:#8a3a2e; }
