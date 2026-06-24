@@ -221,7 +221,7 @@ def get_log(conn: sqlite3.Connection, limit: int = 200):
     return conn.execute("""
         SELECT l.*, p.caption, p.photo_path
         FROM post_log l
-        JOIN posts p ON l.post_id = p.id
+        LEFT JOIN posts p ON l.post_id = p.id
         ORDER BY l.logged_at DESC
         LIMIT ?
     """, (limit,)).fetchall()
