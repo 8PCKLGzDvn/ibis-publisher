@@ -56,25 +56,42 @@ LrFunctionContext.callWithContext('IbisDialog', function(context)
         return default
     end
 
-    local function saveSetting(key, value)
-        Database.exec(string.format(
-            "INSERT OR REPLACE INTO settings (key,value,updated_at) VALUES ('%s','%s',datetime('now'));",
-            key, tostring(value):gsub("'","''")))
-    end
-
     -- ── State ────────────────────────────────────────────────────
     local captions = {}
     for i = 1, #photos do captions[i] = '' end
 
-    -- ── Export + queue ───────────────────────────────────────────
-    local function doExport(postNow, quality, maxDim, colorSpace, doSharp, doWatermark)
+    -- ── Export settings (read once from DB) ───────────────────────
+    local quality     = tonumber(getSetting('export_quality', '90')) or 90
+    local colorSpace  = getSetting('export_color_space', 'sRGB')
+    local doResize    = getSetting('export_do_resize', '1') ~= '0'
+    local dimension   = tonumber(getSetting('export_dimension', '2048')) or 2048
+    local resolution  = tonumber(getSetting('export_resolution', '240')) or 240
+    local dontEnlarge = getSetting('export_dont_enlarge', '1') ~= '0'
 
-        -- Save export settings for next time
-        saveSetting('export_quality',     tostring(quality))
-        saveSetting('export_max_dimension', tostring(maxDim))
-        saveSetting('export_color_space', colorSpace)
-        saveSetting('export_sharpening',  doSharp and '1' or '0')
-        saveSetting('export_watermark',   doWatermark and '1' or '0')
+    local exportSettings = {
+        LR_export_destinationType        = 'specificFolder',
+        LR_export_destinationPathPrefix  = IbisExportDir,
+        LR_export_useSubfolder           = false,
+        LR_format                        = 'JPEG',
+        LR_jpeg_quality                  = quality / 100,
+        LR_size_doConstrain              = doResize,
+        LR_size_maxWidth                 = dimension,
+        LR_size_maxHeight                = dimension,
+        LR_size_resizeType               = 'longEdge',
+        LR_size_units                    = 'pixels',
+        LR_size_doNotEnlarge             = dontEnlarge,
+        LR_jpeg_useLimitSize             = false,
+        LR_collisionHandling             = 'rename',
+        LR_outputSharpeningOn            = false,
+        LR_export_colorSpace             = colorSpace,
+        LR_useWatermark                  = false,
+        LR_removeLocationMetadata        = false,
+        LR_metadata_keywordOptions       = 'lightroomHierarchical',
+        LR_export_resolution             = resolution,
+    }
+
+    -- ── Export + queue ───────────────────────────────────────────
+    local function doExport(postNow)
 
         -- Calculate slots
         local slots = {}
@@ -105,27 +122,6 @@ LrFunctionContext.callWithContext('IbisDialog', function(context)
                 return false
             end
         end
-
-        local exportSettings = {
-            LR_export_destinationType       = 'specificFolder',
-            LR_export_destinationPathPrefix = IbisExportDir,
-            LR_export_useSubfolder          = false,
-            LR_format                       = 'JPEG',
-            LR_jpeg_quality                 = quality / 100,
-            LR_size_doConstrain             = true,
-            LR_size_boundingSquareDimension = maxDim,
-            LR_size_units                   = 'pixels',
-            LR_size_resizeType              = 'longEdge',
-            LR_jpeg_useLimitSize            = false,
-            LR_collisionHandling            = 'rename',
-            LR_outputSharpeningOn           = doSharp,
-            LR_outputSharpeningMedia        = 'screen',
-            LR_outputSharpeningLevel        = 2,
-            LR_export_colorSpace            = colorSpace,
-            LR_useWatermark                 = doWatermark,
-            LR_removeLocationMetadata       = false,
-            LR_metadata_keywordOptions      = 'lightroomHierarchical',
-        }
 
         local exported = 0
         local errors   = 0
@@ -177,13 +173,6 @@ LrFunctionContext.callWithContext('IbisDialog', function(context)
         LrDialogs.message('Ibis Publisher', msg, 'info')
         return true
     end
-
-    -- ── Export settings (loaded once) ───────────────────────────
-    local quality    = tonumber(getSetting('export_quality', '90')) or 90
-    local maxDim     = tonumber(getSetting('export_max_dimension', '2048')) or 2048
-    local colorSpace = getSetting('export_color_space', 'sRGB')
-    local doSharp    = getSetting('export_sharpening', '1') ~= '0'
-    local doWatermark = getSetting('export_watermark', '0') == '1'
 
     -- ── Show dialog ──────────────────────────────────────────────
     local function showDialog(idx)
@@ -240,8 +229,7 @@ LrFunctionContext.callWithContext('IbisDialog', function(context)
                 title  = '⚡  Post Now',
                 action = function()
                     captions[idx] = props.caption or ''
-                    doExport(true, quality, maxDim,
-                             colorSpace, doSharp, doWatermark)
+                    doExport(true)
                 end,
             })
         end
@@ -258,8 +246,7 @@ LrFunctionContext.callWithContext('IbisDialog', function(context)
         if result == 'ok' then
             captions[idx] = props.caption or ''
             if isLast then
-                doExport(false, quality, maxDim,
-                         colorSpace, doSharp, doWatermark)
+                doExport(false)
             else
                 showDialog(idx + 1)
             end
