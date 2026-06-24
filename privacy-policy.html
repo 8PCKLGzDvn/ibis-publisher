@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ibis Publisher - Privacy Policy</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; color: #1a1a1a; line-height: 1.7; background: #fff; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  h2 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+  p, li { font-size: 15px; color: #333; }
+  .updated { font-size: 13px; color: #888; margin-bottom: 32px; }
+  a { color: #1a6b72; }
+  ul { padding-left: 20px; }
+  ul li { margin-bottom: 8px; }
+  .note { background: #f0f9f9; border-left: 3px solid #1a6b72; padding: 16px 20px; border-radius: 4px; margin: 24px 0; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 40px 0; }
+</style>
+</head>
+<body>
+
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: June 17, 2026</p>
+
+<div class="note">
+<strong>Ibis Publisher is a local application.</strong> It runs entirely on your Mac and does not operate any external servers. Your photos and captions are sent directly from your device to Facebook's API — they do not pass through any Ibis-operated infrastructure.
+</div>
+
+<h2>1. What Ibis Publisher Does</h2>
+<p>Ibis Publisher is a desktop tool for professional photographers that connects Adobe Lightroom Classic to your Facebook Page. It allows you to export photos from Lightroom, write captions, and schedule or immediately publish posts to your Facebook Page via Facebook's Graph API.</p>
+
+<h2>2. Information Processed Locally</h2>
+<p>The following information is stored locally on your Mac and is never transmitted to any Ibis-operated server:</p>
+<ul>
+  <li><strong>Your Facebook Page Access Token</strong> — stored in a local SQLite database on your device, used solely to authenticate requests to Facebook's API.</li>
+  <li><strong>Your Facebook Page ID and Page Name</strong> — stored locally for display purposes.</li>
+  <li><strong>Post queue data</strong> — captions, scheduled times, and local file paths, stored in a local database at <code>~/Library/Application Support/IbisPublisher/queue.db</code>.</li>
+  <li><strong>Exported JPEG files</strong> — temporary copies of your photos exported for upload, stored at <code>~/Library/Application Support/IbisPublisher/exports/</code> and automatically deleted after successful posting.</li>
+</ul>
+
+<h2>3. Information Sent to Facebook</h2>
+<p>When you publish or schedule a post, Ibis Publisher sends the following directly from your Mac to Facebook's Graph API (graph.facebook.com):</p>
+<ul>
+  <li>The exported JPEG image</li>
+  <li>Your post caption</li>
+  <li>The scheduled publish time (if scheduling in advance)</li>
+  <li>Your Page Access Token (to authenticate the request)</li>
+</ul>
+<p>This data goes directly from your device to Facebook. It does not pass through any Ibis servers. Facebook's handling of this data is governed by <a href="https://www.facebook.com/privacy/policy/">Meta's Privacy Policy</a>.</p>
+
+<h2>4. Information We Do Not Collect</h2>
+<p>Ibis Publisher does not collect, store, or transmit:</p>
+<ul>
+  <li>Your name, email address, or any personal identification information</li>
+  <li>Usage analytics or telemetry</li>
+  <li>Your original photographs or Lightroom catalog data</li>
+  <li>Any data to Ibis-operated servers — none exist</li>
+</ul>
+
+<h2>5. Data Storage</h2>
+<p>All application data is stored locally on your Mac:</p>
+<ul>
+  <li>Database: <code>~/Library/Application Support/IbisPublisher/queue.db</code></li>
+  <li>Temporary exports: <code>~/Library/Application Support/IbisPublisher/exports/</code></li>
+</ul>
+<p>Exported JPEGs are automatically deleted after each photo is successfully uploaded to Facebook.</p>
+
+<h2>6. Facebook / Meta</h2>
+<p>Ibis Publisher uses Facebook's Graph API under your own developer app credentials. Your use of Facebook through Ibis Publisher is subject to <a href="https://www.facebook.com/terms">Meta's Terms of Service</a> and <a href="https://www.facebook.com/privacy/policy/">Privacy Policy</a>. Ibis Publisher is not affiliated with or endorsed by Meta Platforms, Inc.</p>
+
+<h2>7. Security</h2>
+<p>All communication with Facebook's API is conducted over HTTPS. Your Page Access Token is stored locally in a SQLite file on your device. Since Ibis Publisher does not operate servers or collect data remotely, the primary security boundary is your own Mac.</p>
+
+<h2>8. Children's Privacy</h2>
+<p>Ibis Publisher is intended for professional photographers and is not directed at children under 13.</p>
+
+<h2>9. Changes to This Policy</h2>
+<p>We may update this Privacy Policy from time to time. Changes will be reflected on this page with an updated date.</p>
+
+<h2>10. Contact</h2>
+<p>If you have questions about this Privacy Policy, contact us at:<br>
+Email: <a href="mailto:hello@justinmullet.com">hello@justinmullet.com</a></p>
+
+<hr>
+<p style="font-size: 13px; color: #888;">Ibis Publisher &middot; &copy; 2026 Justin Mullet</p>
+
+</body>
+</html>

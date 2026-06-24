@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ibis Publisher - Data Deletion</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; color: #1a1a1a; line-height: 1.7; background: #fff; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  h2 { font-size: 18px; margin-top: 32px; margin-bottom: 8px; }
+  p, li { font-size: 15px; color: #333; }
+  .updated { font-size: 13px; color: #888; margin-bottom: 32px; }
+  a { color: #1a6b72; }
+  ol, ul { padding-left: 20px; }
+  ol li, ul li { margin-bottom: 8px; }
+  .note { background: #f0f9f9; border-left: 3px solid #1a6b72; padding: 16px 20px; border-radius: 4px; margin: 24px 0; }
+  code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 40px 0; }
+</style>
+</head>
+<body>
+
+<h1>Data Deletion Instructions</h1>
+<p class="updated">Last updated: June 17, 2026</p>
+
+<div class="note">
+<strong>Ibis Publisher stores all data locally on your Mac.</strong> No personal data is held on external servers. Deletion is entirely under your control.
+</div>
+
+<h2>Delete All Local Ibis Publisher Data</h2>
+<p>To remove all data stored by Ibis Publisher from your Mac, delete the following folder:</p>
+<p><code>~/Library/Application Support/IbisPublisher/</code></p>
+<p>This folder contains:</p>
+<ul>
+  <li>Your post queue database (<code>queue.db</code>) — includes captions, scheduled times, and your Facebook Page Access Token</li>
+  <li>Any exported JPEG files awaiting upload (<code>exports/</code> folder)</li>
+</ul>
+<p>To delete it, open Terminal and run:</p>
+<p><code>rm -rf ~/Library/Application\ Support/IbisPublisher/</code></p>
+
+<h2>Remove the Lightroom Plugin</h2>
+<ol>
+  <li>Open <strong>Adobe Lightroom Classic</strong></li>
+  <li>Go to <strong>File &gt; Plug-in Manager</strong></li>
+  <li>Select <strong>Ibis Publisher</strong> in the left panel</li>
+  <li>Click <strong>Remove</strong></li>
+</ol>
+
+<h2>Remove the Companion App</h2>
+<p>Stop the background service and remove it from login items:</p>
+<ol>
+  <li>Open Terminal and run:<br><code>launchctl unload ~/Library/LaunchAgents/com.ibispublisher.app.plist</code></li>
+  <li>Then delete the plist:<br><code>rm ~/Library/LaunchAgents/com.ibispublisher.app.plist</code></li>
+  <li>Delete the application folder from wherever you installed it</li>
+</ol>
+
+<h2>Revoke Facebook Access</h2>
+<p>To remove Ibis Publisher's connection to your Facebook account and Page:</p>
+<ol>
+  <li>Go to <strong>Facebook Settings &gt; Apps and Websites</strong></li>
+  <li>Find your developer app (e.g. "Ibis Publisher 2") and click <strong>Remove</strong></li>
+</ol>
+<p>This revokes the Page Access Token and prevents any further API calls from your app credentials.</p>
+
+<h2>What Was Never Stored Remotely</h2>
+<ul>
+  <li>Your photographs — only temporarily on your device during export, then deleted after upload</li>
+  <li>Personal information — never collected</li>
+  <li>Usage analytics — never tracked</li>
+  <li>Captions or post history — only stored locally in your queue database</li>
+</ul>
+
+<h2>Contact</h2>
+<p>If you have questions about data deletion, contact us at:<br>
+Email: <a href="mailto:hello@justinmullet.com">hello@justinmullet.com</a></p>
+
+<hr>
+<p style="font-size: 13px; color: #888;">Ibis Publisher &middot; &copy; 2026 Justin Mullet</p>
+
+</body>
+</html>
