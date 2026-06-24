@@ -1,0 +1,32 @@
+🦢 IBIS PUBLISHER — HOW TO USE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FIRST TIME SETUP (do this once)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Double-click "Install Auto-Start.command"
+
+This installs Ibis Publisher as a background service.
+It will:
+  • Start right now
+  • Open your browser to http://localhost:8765
+  • Start automatically every time you log in to your Mac
+  • Run silently in the background — no Terminal window
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OPENING THE APP AFTER SETUP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Double-click "Open Ibis Publisher.command"
+Or just go to http://localhost:8765 in any browser.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LIGHTROOM PLUGIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Add the plugin via:
+Lightroom → File → Plug-in Manager → Add
+Navigate to: lightroom-plugin/IbisPublisher.lrplugin
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UNINSTALL AUTO-START
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Run this in Terminal:
+launchctl unload ~/Library/LaunchAgents/com.ibispublisher.app.plist

@@ -1,0 +1,16 @@
+#!/bin/bash
+export PATH="/usr/local/bin:/usr/bin:/opt/homebrew/bin:/Library/Developer/CommandLineTools/usr/bin:$PATH"
+
+BUNDLE="$(cd "$(dirname "$0")/../../.." && pwd)"
+APP_DIR="$BUNDLE/ibis-publisher"
+
+if [ ! -f "$APP_DIR/run.py" ]; then
+    APP_DIR="$HOME/Desktop/Ibis Publisher/ibis-publisher"
+fi
+
+osascript << APPLESCRIPT
+tell application "Terminal"
+    activate
+    do script "export PATH='/usr/local/bin:/usr/bin:/opt/homebrew/bin:/Library/Developer/CommandLineTools/usr/bin:'$PATH; cd '$APP_DIR' && python3 -m pip install flask requests plyer Pillow --quiet --user 2>/dev/null; python3 run.py"
+end tell
+APPLESCRIPT

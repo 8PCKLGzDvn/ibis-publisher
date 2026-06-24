@@ -1,0 +1,7 @@
+# Ibis Publisher — Python dependencies
+# Install: pip install -r requirements.txt
+
+requests>=2.31.0        # Facebook API calls
+plyer>=2.1.0            # Cross-platform notifications (fallback)
+Pillow>=10.0.0          # Image verification before upload
+pyinstaller>=6.0.0      # For building standalone .app / .exe

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Get python3 path — works even when launched from Finder
+export PATH="/usr/local/bin:/usr/bin:/opt/homebrew/bin:$HOME/Library/Python/3.9/bin:$HOME/Library/Python/3.10/bin:$HOME/Library/Python/3.11/bin:/Library/Developer/CommandLineTools/usr/bin:$PATH"
+
+# Find run.py relative to this .app
+SCRIPT="$(dirname "$0")"
+APP_DIR="$(cd "$SCRIPT/../../.." && pwd)/ibis-publisher"
+
+# Fallback locations
+if [ ! -f "$APP_DIR/run.py" ]; then
+    APP_DIR="$HOME/Desktop/Ibis Publisher/ibis-publisher"
+fi
+if [ ! -f "$APP_DIR/run.py" ]; then
+    APP_DIR="$HOME/Desktop/ibis-publisher"
+fi
+
+# Install deps if needed
+python3 -m pip install flask requests plyer Pillow --quiet --user 2>/dev/null
+
+cd "$APP_DIR"
+python3 run.py

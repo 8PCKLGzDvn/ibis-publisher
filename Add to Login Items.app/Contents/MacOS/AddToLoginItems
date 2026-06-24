@@ -1,0 +1,9 @@
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_PATH="$(cd "$SCRIPT_DIR/../../../IbisPublisher.app" 2>/dev/null && pwd)"
+osascript << APPLESCRIPT
+tell application "System Events"
+    make login item at end with properties {path:"$APP_PATH", hidden:false}
+end tell
+display dialog "Done! Ibis Publisher will now open automatically when you log in to your Mac." buttons {"OK"} default button "OK"
+APPLESCRIPT
