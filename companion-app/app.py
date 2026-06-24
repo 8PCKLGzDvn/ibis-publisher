@@ -435,6 +435,7 @@ def queue():
                         f'data-pid="{pid}" data-time="{full_dt}" '
                         f'data-cap="{cap_escaped}" data-status="{st}" data-fbid="{fb_post_id}" '
                         f'{interact}>\n'
+                        f'  <input type="checkbox" class="select-check" data-pid="{pid}" onclick="event.stopPropagation();toggleCardSelect({pid})">\n'
                         f'  {img_html}\n'
                         f'  <div class="card-body">\n'
                         f'    <div class="card-time">{t}</div>\n'
@@ -492,6 +493,7 @@ def queue():
                 f'data-pid="{pid}" data-time="{full_dt}" '
                 f'data-cap="{cap_escaped}" data-status="{st}" data-fbid="{fb_post_id}" '
                 f'{interact}>\n'
+                f'  <input type="checkbox" class="select-check" data-pid="{pid}" onclick="event.stopPropagation();toggleCardSelect({pid})">\n'
                 f'  {img_html}\n'
                 f'  <div class="card-body">\n'
                 f'    <div class="card-time">{t}</div>\n'
@@ -538,6 +540,8 @@ def queue():
            f'<a href="/?week={prev_week}">{prev_label}</a>'
            f'<span class="cal-title">{title}</span>'
            f'<a href="/?week={next_week}">{next_label}</a>'
+           f'<button class="btn btn-secondary btn-sm" id="select-mode-btn" onclick="toggleSelectMode()" '
+           f'style="margin-left:12px;font-size:12px;padding:6px 12px">Select</button>'
            f'</div>')
 
     modal_css = '''
@@ -603,6 +607,17 @@ def queue():
   <span style="font-size:15px;font-weight:500">📋 You have unsaved schedule changes</span>
   <button id="submit-reorder-btn" class="btn btn-success" onclick="submitCalReorder()">✓ Submit Changes</button>
   <button class="btn btn-secondary" onclick="cancelCalReorder()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)">✕ Cancel</button>
+</div>
+<div id="multi-select-bar">
+  <span class="select-count" id="select-count">0 selected</span>
+  <button class="btn btn-danger" id="multi-delete-btn" onclick="multiDeleteStart()">Delete Selected</button>
+  <div id="multi-delete-confirm" style="display:none;align-items:center;gap:8px;">
+    <span style="font-size:13px;color:#f5d8d4">Delete these posts? This will also remove them from Facebook.</span>
+    <button class="btn btn-danger" id="multi-delete-confirm-btn" onclick="multiDeleteConfirm()">Yes, delete</button>
+    <button class="btn btn-secondary" onclick="multiDeleteCancel()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)">Cancel</button>
+  </div>
+  <span style="flex:1"></span>
+  <button class="btn btn-secondary" onclick="exitSelectMode()" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)">✕ Cancel</button>
 </div>
 <div id="reorder-toast"></div>
 
@@ -698,6 +713,7 @@ function showToast(msg) {{
 
 // ── Modal ─────────────────────────────────────────────────
 function openModal(pid) {{
+    if (selectMode) {{ toggleCardSelect(pid); return; }}
     const card = document.getElementById('cal-card-'+pid);
     if (!card) return;
     modalPid = pid;
@@ -1056,6 +1072,140 @@ async function modalDeleteConfirm() {{
     }}
 }}
 
+// ── Multi-select ─────────────────────────────────────
+let selectMode = false;
+let selectedPids = new Set();
+
+function toggleSelectMode() {{
+    if (selectMode) {{ exitSelectMode(); return; }}
+    selectMode = true;
+    document.querySelector('.cal-grid').classList.add('select-mode');
+    document.getElementById('select-mode-btn').textContent = 'Cancel Select';
+    document.getElementById('multi-select-bar').classList.add('visible');
+    updateSelectCount();
+}}
+
+function exitSelectMode() {{
+    selectMode = false;
+    selectedPids.clear();
+    document.querySelector('.cal-grid').classList.remove('select-mode');
+    document.getElementById('select-mode-btn').textContent = 'Select';
+    document.getElementById('multi-select-bar').classList.remove('visible');
+    document.querySelectorAll('.post-card.selected').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.select-check').forEach(cb => cb.checked = false);
+    multiDeleteCancel();
+}}
+
+function toggleCardSelect(pid) {{
+    const card = document.getElementById('cal-card-' + pid);
+    const cb = card?.querySelector('.select-check');
+    if (!card || !selectMode) return;
+    if (selectedPids.has(pid)) {{
+        selectedPids.delete(pid);
+        card.classList.remove('selected');
+        if (cb) cb.checked = false;
+    }} else {{
+        selectedPids.add(pid);
+        card.classList.add('selected');
+        if (cb) cb.checked = true;
+    }}
+    updateSelectCount();
+}}
+
+function updateSelectCount() {{
+    const n = selectedPids.size;
+    document.getElementById('select-count').textContent = n + ' selected';
+    document.getElementById('multi-delete-btn').disabled = (n === 0);
+    document.getElementById('multi-delete-btn').style.opacity = n === 0 ? '.5' : '1';
+}}
+
+function multiDeleteStart() {{
+    if (selectedPids.size === 0) return;
+    document.getElementById('multi-delete-btn').style.display = 'none';
+    document.getElementById('multi-delete-confirm').style.display = 'flex';
+}}
+
+function multiDeleteCancel() {{
+    document.getElementById('multi-delete-confirm').style.display = 'none';
+    document.getElementById('multi-delete-btn').style.display = '';
+}}
+
+async function multiDeleteConfirm() {{
+    const pids = [...selectedPids];
+    if (pids.length === 0) return;
+
+    const btn = document.getElementById('multi-delete-confirm-btn');
+    btn.disabled = true; btn.textContent = 'Deleting…';
+    document.getElementById('multi-delete-confirm').querySelector('.btn-secondary').style.display = 'none';
+
+    // Set all selected badges to "Deleting"
+    for (const pid of pids) {{
+        const badge = document.getElementById('badge-' + pid);
+        if (badge) {{ badge.className = 'badge badge-deleting post-badge'; badge.textContent = 'Deleting'; }}
+    }}
+
+    try {{
+        const r = await fetch('/delete-multiple', {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json', 'X-Requested-With': 'fetch' }},
+            body: JSON.stringify({{ ids: pids }})
+        }});
+        const d = await r.json();
+        if (d.ok) {{
+            for (const pid of pids) {{
+                const card = document.getElementById('cal-card-' + pid);
+                if (card) {{
+                    card.style.transition = 'opacity 0.5s ease';
+                    card.style.opacity = '0';
+                    setTimeout(() => {{
+                        const parent = card.parentNode;
+                        const cardTime = card.dataset.time || '';
+                        card.remove();
+                        if (parent) {{
+                            const hhmm = cardTime.substring(11,16);
+                            const now = new Date();
+                            const slotDate = new Date(cardTime.replace(' ','T'));
+                            let slot;
+                            if (slotDate > now) {{
+                                slot = document.createElement('label');
+                                slot.className = 'empty-slot empty-slot-upload';
+                                slot.title = 'Upload a photo for ' + hhmm;
+                                slot.dataset.time = cardTime;
+                                slot.innerHTML = '<input type="file" accept="image/*" style="display:none" '
+                                    + 'onchange="slotUpload(this,\\''+cardTime+'\\')">'
+                                    + '<span class="empty-slot-time">'+hhmm+'</span>'
+                                    + '<span class="empty-slot-icon">+</span>';
+                            }} else {{
+                                slot = document.createElement('div');
+                                slot.className = 'empty-slot';
+                                slot.dataset.time = cardTime;
+                                slot.innerHTML = '<span class="empty-slot-time">'+hhmm+'</span>';
+                            }}
+                            insertCardSorted(parent, slot);
+                            if (!parent.querySelector('.post-card') && !parent.querySelector('.empty-slot'))
+                                parent.innerHTML = '<div class="day-empty">No posts</div>';
+                        }}
+                    }}, 500);
+                }}
+            }}
+            showToast('✓ ' + pids.length + ' post(s) deleted');
+        }} else {{
+            for (const pid of pids) {{
+                const badge = document.getElementById('badge-' + pid);
+                if (badge) {{ badge.className = 'badge badge-failure post-badge'; badge.textContent = 'Error'; }}
+            }}
+            showToast(d.error || 'Delete failed');
+        }}
+    }} catch(e) {{
+        for (const pid of pids) {{
+            const badge = document.getElementById('badge-' + pid);
+            if (badge) {{ badge.className = 'badge badge-failure post-badge'; badge.textContent = 'Error'; }}
+        }}
+        showToast('Delete failed — please try again.');
+    }}
+    exitSelectMode();
+}}
+
 async function modalRetry() {{
     if (!modalPid) return;
     const btn = document.getElementById('modal-retry-btn');
@@ -1085,6 +1235,7 @@ async function modalRetry() {{
 
 // ── Mouse-based drag ──────────────────────────────────────
 function calMouseDown(e, pid, datetime) {{
+    if (selectMode) {{ toggleCardSelect(pid); return; }}
     if (e.button !== 0) return;
     e.preventDefault();
     calDragPid = pid;
@@ -1969,6 +2120,23 @@ pollTimer = setInterval(pollStatuses, 5000);
 .cal-grid.drag-in-progress .post-card:not(.dragging):not(.card-drop-over) {{
     opacity:0.35; transition:opacity .1s;
 }}
+.post-card .select-check {{
+    display:none; position:absolute; top:6px; left:6px; z-index:10;
+    width:20px; height:20px; accent-color:#749A96; cursor:pointer;
+}}
+.select-mode .post-card {{ position:relative; cursor:pointer !important; }}
+.select-mode .post-card .select-check {{ display:block; }}
+.select-mode .post-card.selected {{ outline:2px solid #749A96; outline-offset:-2px; border-radius:10px; }}
+#multi-select-bar {{
+    position:sticky; bottom:0; left:0; right:0;
+    background:#343434; color:white; padding:14px 24px;
+    display:none; align-items:center; gap:16px; z-index:100;
+    box-shadow:0 -2px 12px rgba(0,0,0,.25);
+}}
+#multi-select-bar.visible {{ display:flex; }}
+#multi-select-bar .select-count {{ font-size:15px; font-weight:500; }}
+#multi-select-bar .btn {{ height:36px; padding:0 16px; font-size:13px;
+    display:flex; align-items:center; justify-content:center; gap:4px; }}
 .card-drop-over {{
     opacity:1 !important;
     box-shadow:0 4px 20px rgba(0,0,0,.18) !important;
@@ -2214,6 +2382,7 @@ def api_week_columns():
                         f'data-pid="{pid}" data-time="{full_dt}" '
                         f'data-cap="{cap_escaped}" data-status="{st}" data-fbid="{fb_post_id}" '
                         f'{interact}>\n'
+                        f'  <input type="checkbox" class="select-check" data-pid="{pid}" onclick="event.stopPropagation();toggleCardSelect({pid})">\n'
                         f'  {img_html}\n'
                         f'  <div class="card-body">\n'
                         f'    <div class="card-time">{t}</div>\n'
@@ -2529,6 +2698,37 @@ def delete_post_route(post_id):
     if request.headers.get('X-Requested-With') == 'fetch':
         return jsonify(ok=True)
     return redirect('/')
+
+
+@app.route('/delete-multiple', methods=['POST'])
+def delete_multiple():
+    data = request.get_json(silent=True) or {}
+    ids = data.get('ids', [])
+    if not ids or not isinstance(ids, list):
+        return jsonify(ok=False, error='No posts specified')
+    deleted = 0
+    for post_id in ids:
+        try:
+            post_id = int(post_id)
+            row = conn.execute("SELECT photo_path FROM posts WHERE id=?", (post_id,)).fetchone()
+            if not row:
+                continue
+            _cancel_fb_post(post_id)
+            try:
+                log_event(conn, post_id, 'deleted', description='Post deleted (bulk delete)')
+            except Exception:
+                pass
+            photo_path = (row['photo_path'] if row else '') or ''
+            if photo_path and os.path.exists(photo_path):
+                try:
+                    os.remove(photo_path)
+                except Exception:
+                    pass
+            delete_post(conn, post_id)
+            deleted += 1
+        except Exception:
+            continue
+    return jsonify(ok=True, deleted=deleted)
 
 
 @app.route('/retry-failed')
