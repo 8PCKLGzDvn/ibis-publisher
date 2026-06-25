@@ -30,7 +30,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from core.db import (
     init_db, get_setting, set_setting, get_all_posts,
-    delete_post, update_post_status, get_log, handle_missed_posts, log_event
+    delete_post, update_post_status, get_log, handle_missed_posts, log_event,
+    get_thumbnail_dir
 )
 from core.notifications import send as notify
 from core.facebook_api import FacebookClient, FacebookAPIError, attempt_post
@@ -272,8 +273,8 @@ def thumb(post_id):
             return send_file(buf, mimetype='image/jpeg')
         except Exception:
             pass
-    if row['fb_thumbnail_url']:
-        return _proxy_fb_image(row['fb_thumbnail_url'], thumbnail=True)
+    if row['fb_thumbnail_url'] and os.path.exists(row['fb_thumbnail_url']):
+        return send_file(row['fb_thumbnail_url'], mimetype='image/jpeg')
     abort(404)
 
 @app.route('/photo/<int:post_id>')
@@ -283,8 +284,8 @@ def full_photo(post_id):
         abort(404)
     if row['photo_path'] and os.path.exists(row['photo_path']):
         return send_file(row['photo_path'], mimetype='image/jpeg')
-    if row['fb_thumbnail_url']:
-        return _proxy_fb_image(row['fb_thumbnail_url'])
+    if row['fb_thumbnail_url'] and os.path.exists(row['fb_thumbnail_url']):
+        return send_file(row['fb_thumbnail_url'], mimetype='image/jpeg')
     abort(404)
 
 
@@ -3191,9 +3192,11 @@ def settings():
                   if page_id and page_name else \
                   '<div class="alert alert-error">❌ Not connected to Facebook yet.</div>'
 
-    from core.db import get_export_dir
+    from core.db import get_export_dir, get_thumbnail_dir
     photo_dir = str(get_export_dir())
     photo_count = len([f for f in os.listdir(photo_dir) if not f.startswith('.')]) if os.path.isdir(photo_dir) else 0
+    thumb_dir = str(get_thumbnail_dir())
+    thumb_count = len([f for f in os.listdir(thumb_dir) if not f.startswith('.')]) if os.path.isdir(thumb_dir) else 0
 
     content = f'''
     <h2>Settings</h2>
@@ -3208,6 +3211,18 @@ def settings():
         <a href="/open-photo-folder" class="btn btn-secondary" style="font-size:12px;white-space:nowrap;">Open in Finder</a>
       </div>
       <p style="font-size:12px;color:#999;margin:0;">{photo_count} file{"s" if photo_count != 1 else ""} currently stored</p>
+    </div>
+    <div class="card">
+      <h3>🖼 Temporary Thumbnail Storage</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:8px;">
+        After a photo is posted to Facebook, a small thumbnail is saved locally so it can be displayed in the queue.
+        Thumbnails are automatically purged 90 days after the post goes live.
+      </p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <code style="font-size:12px;background:#f5f2ee;padding:6px 10px;border-radius:6px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{thumb_dir}</code>
+        <a href="/open-thumbnail-folder" class="btn btn-secondary" style="font-size:12px;white-space:nowrap;">Open in Finder</a>
+      </div>
+      <p style="font-size:12px;color:#999;margin:0;">{thumb_count} thumbnail{"s" if thumb_count != 1 else ""} currently stored</p>
     </div>
     <div class="card">
       <h3>🔗 Facebook Connection</h3>
@@ -3256,6 +3271,16 @@ def open_photo_folder():
     import subprocess
     from core.db import get_export_dir
     folder = str(get_export_dir())
+    subprocess.Popen(['open', folder])
+    return redirect('/settings')
+
+
+@app.route('/open-thumbnail-folder')
+def open_thumbnail_folder():
+    import subprocess
+    from core.db import get_thumbnail_dir
+    folder = str(get_thumbnail_dir())
+    os.makedirs(folder, exist_ok=True)
     subprocess.Popen(['open', folder])
     return redirect('/settings')
 
@@ -3569,12 +3594,21 @@ def delete_schedule(pattern_id):
 
 
 def _fetch_fb_thumbnail(conn, client, pid, fb_id):
+    import requests as req
     try:
         thumb_url = client.get_post_thumbnail(fb_id)
         if thumb_url:
-            conn.execute("UPDATE posts SET fb_thumbnail_url=? WHERE id=?", (thumb_url, pid))
-            conn.commit()
-            return True
+            r = req.get(thumb_url, timeout=15)
+            if r.status_code == 200:
+                thumb_dir = get_thumbnail_dir()
+                thumb_dir.mkdir(parents=True, exist_ok=True)
+                thumb_path = thumb_dir / f'{pid}.jpg'
+                img = Image.open(BytesIO(r.content))
+                img.thumbnail((400, 400), Image.LANCZOS)
+                img.save(str(thumb_path), format='JPEG', quality=85)
+                conn.execute("UPDATE posts SET fb_thumbnail_url=? WHERE id=?", (str(thumb_path), pid))
+                conn.commit()
+                return True
     except Exception as e:
         print(f'⚠ Could not fetch FB thumbnail for #{pid}: {e}')
     return False
@@ -3635,6 +3669,10 @@ def run_scheduler():
                                        last_attempt_at=datetime.now().isoformat())
                     log_event(conn, pid, 'attempt', description='Scheduled upload started')
                     success, fb_id, error = attempt_post(client, post)
+                    if error and error.startswith('SKIP:'):
+                        update_post_status(conn, pid, status='scheduled',
+                                           last_error=None)
+                        continue
                     if success:
                         try:
                             sched_dt = datetime.strptime(post['scheduled_time'][:16], '%Y-%m-%d %H:%M')
@@ -3705,6 +3743,22 @@ def purge_old_photos(conn):
                 if _fetch_fb_thumbnail(conn, client, r['id'], r['facebook_post_id']):
                     if r['status'] == 'posted':
                         _purge_local_photo(conn, r['id'], r['photo_path'] or '')
+    old_thumbs = conn.execute("""
+        SELECT id, fb_thumbnail_url FROM posts
+        WHERE status = 'posted'
+          AND fb_thumbnail_url IS NOT NULL AND fb_thumbnail_url != ''
+          AND posted_at < datetime('now', '-90 days')
+    """).fetchall()
+    for row in old_thumbs:
+        path = row['fb_thumbnail_url']
+        if path and os.path.exists(path):
+            try:
+                os.remove(path)
+            except Exception:
+                pass
+        conn.execute("UPDATE posts SET fb_thumbnail_url='' WHERE id=?", (row['id'],))
+    if old_thumbs:
+        conn.commit()
 
 
 def _recover_interrupted_posts(conn):

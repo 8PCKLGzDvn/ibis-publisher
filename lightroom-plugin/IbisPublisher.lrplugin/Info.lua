@@ -10,8 +10,6 @@ return {
 
     LrToolkitIdentifier = 'com.ibispublisher.lrplugin',
     LrPluginName        = 'Ibis Publisher',
-    LrPluginInfoUrl     = 'https://github.com/ibispublisher',
-
     VERSION = { major=1, minor=17, revision=0, build=1 },
 
     LrInitPlugin         = 'PluginInit.lua',

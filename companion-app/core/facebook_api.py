@@ -257,18 +257,3 @@ def attempt_post(client: FacebookClient, post: dict, force_immediate: bool = Fal
         return False, '', 'NETWORK_ERROR: Could not connect to Facebook'
     except Exception as e:
         return False, '', f'UNEXPECTED: {e}'
-
-    except FacebookAuthError as e:
-        return False, '', f'AUTH_ERROR: {e}'
-    except FacebookRateLimitError as e:
-        return False, '', f'RATE_LIMIT: {e}'
-    except FacebookAPIError as e:
-        return False, '', f'API_ERROR ({e.http_status}): {e}'
-    except FileNotFoundError:
-        return False, '', f'FILE_NOT_FOUND: {photo_path}'
-    except requests.exceptions.Timeout:
-        return False, '', 'TIMEOUT: Request timed out'
-    except requests.exceptions.ConnectionError:
-        return False, '', 'NETWORK_ERROR: Could not connect to Facebook'
-    except Exception as e:
-        return False, '', f'UNEXPECTED: {e}'

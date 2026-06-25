@@ -24,6 +24,9 @@ def get_db_path() -> Path:
 def get_export_dir() -> Path:
     return get_data_dir() / 'exports'
 
+def get_thumbnail_dir() -> Path:
+    return get_data_dir() / 'thumbnails'
+
 def get_schema_path() -> Path:
     """Find schema.sql relative to this file or bundled app."""
     candidates = [
@@ -42,6 +45,7 @@ def init_db() -> sqlite3.Connection:
     data_dir = get_data_dir()
     data_dir.mkdir(parents=True, exist_ok=True)
     get_export_dir().mkdir(parents=True, exist_ok=True)
+    get_thumbnail_dir().mkdir(parents=True, exist_ok=True)
 
     db_path = get_db_path()
     is_new  = not db_path.exists()
