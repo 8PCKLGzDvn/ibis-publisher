@@ -27,12 +27,6 @@ def _local_dt_to_utc(dt: datetime) -> float:
     which launchd can fail to propagate correctly.  Falls back to time.mktime
     if zoneinfo is unavailable.
     """
-    try:
-        from zoneinfo import ZoneInfo  # Python 3.9+
-        tz = ZoneInfo('America/Santiago')
-        return dt.replace(tzinfo=tz).timestamp()
-    except Exception:
-        pass
     import time
     return time.mktime(dt.timetuple())
 
